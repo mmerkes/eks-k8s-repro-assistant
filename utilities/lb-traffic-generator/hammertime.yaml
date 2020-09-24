@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hammertime
+spec:
+  selector:
+    matchLabels:
+      app: hammertime
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hammertime
+    spec:
+      containers:
+      - name: hammertime
+        image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/hammertime:latest
+        env:
+        - name: ENDPOINT_TO_HAMMER
+          value: <ENDPOINT_TO_HAMMER>

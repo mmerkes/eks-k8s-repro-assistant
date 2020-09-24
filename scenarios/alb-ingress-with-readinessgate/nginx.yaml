@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  clusterIP: None
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "30"
+    alb.ingress.kubernetes.io/healthcheck-port: "80"
+    alb.ingress.kubernetes.io/healthy-threshold-count: "10"
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              serviceName: nginx-service
+              servicePort: 80
+            path: /*
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      readinessGates:
+      - conditionType: target-health.alb.ingress.k8s.aws/nginx-ingress_nginx-service_80
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
