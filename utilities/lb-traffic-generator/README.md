@@ -16,11 +16,11 @@ export ACCOUNT_ID=111122223333
 **Step 2**: Prepare container for deployment.
 
 ```
-aws ecr create-repository --repository-name hammertime --region $AWS_REGION
+aws ecr create-repository --repository-name hammertime --region $REGION
 aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
 docker build -t hammertime .
-docker tag hammertime:latest $AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/hammertime:latest
-docker push $AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/hammertime:latest
+docker tag hammertime:latest $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/hammertime:latest
+docker push $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/hammertime:latest
 ```
 
 **Step 3**: Edit `hammertime.yaml` to include your configuration

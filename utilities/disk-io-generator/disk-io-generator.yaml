@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: disk-io-generator
+spec:
+  selector:
+    matchLabels:
+      app: disk-io-generator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: disk-io-generator
+    spec:
+      containers:
+      - name: disk-io-generator
+        image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/disk-io-generator:latest

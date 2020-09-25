@@ -2,6 +2,8 @@
 
 A set of utilities and instructions for reproducing and testing Kubernetes issues.
 
+**NOTE:** The below scenarios and utilities may or may not have been successfully used to reproduce issues, so you should review the code and configuration accordingly and adjust if it's not meeting your needs.
+
 ## Setting up a cluster
 
 ### Set environment variables to be used across commands
@@ -148,3 +150,19 @@ This sets up a service, ingress and deployment with a readiness gate that utiliz
 ### Utility #1: Load balancer traffic generator
 
 This sets up a deployment with pods that continually curl a configured endpoint to generate traffic. You can scale the deployment to increase the amount of traffic hitting your endpoint. See `utilities/lb-traffic-generator/README.md` for more details.
+
+### Utility #2: Disk IO generator
+
+This creates a deployment that constantly reads and writes from disk, intended to create IO pressure. See `utilities/disk-io-generator/README.md` for more details.
+
+## Useful Prometheus Queries
+
+**View nodes by ready status**
+
+You can add the following to a Grafana dashboard to see the status of the different nodes and differentiate between ready, not ready and unknown.
+
+```
+sum(kube_node_status_condition{condition="Ready", status="true"})
+sum(kube_node_status_condition{condition="Ready", status="false"})
+sum(kube_node_status_condition{condition="Ready", status="unknown"})
+```
