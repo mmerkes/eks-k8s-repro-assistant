@@ -155,6 +155,10 @@ This sets up a deployment with pods that continually curl a configured endpoint 
 
 This creates a deployment that constantly reads and writes from disk, intended to create IO pressure. See `utilities/disk-io-generator/README.md` for more details.
 
+### Utility Scripts
+
+The `utilities/scripts` directory is intended for scripts you run ad hoc on your development machine.
+
 ## Useful Prometheus Queries
 
 **View nodes by ready status**
