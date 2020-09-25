@@ -37,6 +37,59 @@ kubectl get pods -n prometheus
 kubectl --namespace=prometheus port-forward deploy/prometheus-server 9090
 ```
 
+### Set up Grafana to view Prometheus metrics
+
+[You need Grafana installed on your laptop for this to work,](https://grafana.com/grafana/download?platform=mac) but you can use Grafana to dashboard Prometheus metrics.
+
+On a Mac:
+
+```
+brew update
+brew install grafana
+# Start grafana service
+brew services start grafana
+# Stop grafana service
+brew services stop grafana
+```
+
+The below is a condensing of [these instructions.](https://prometheus.io/docs/visualization/grafana/)
+
+1. Go to localhost:3000
+2. Login with admin/admin
+3. Change your password
+4. Click "Add data source"
+5. Select "Prometheus"
+6. Set URL to http://localhost:9090. No other settings need to be set.
+7. Click "Save and test"
+8. Now, you can create dashboards in Grafana using Prometheus queries
+
+### Set up metrics-server and Kubernetes dashboard
+
+```
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.7/components.yaml
+# Wait for pods to be running
+kubectl get deployments --all-namespaces | grep metrics-server
+# Verify it's working
+kubectl top node
+# Install kubernetes dashboard
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.4/aio/deploy/recommended.yaml
+
+kubectl apply -f setup/dashboard.yaml
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+# Start a proxy to display dashboard
+kubectl proxy
+```
+
+You can view the dashboard at http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/. You'll need to set up authentication. If it's just a dev cluster and you don't have significant security considerations, you can use an existing token set up for a service account:
+
+```
+# Get the names of your secrets
+k get secrets
+# Get the token and paste it in the console
+k describe secret default-token-2jjt2 | grep token
+```
+
 ### Set up ALB Ingress Controller
 
 This is a shortening of [the EKS docs on how to set up the ALB ingress controller.](https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html)

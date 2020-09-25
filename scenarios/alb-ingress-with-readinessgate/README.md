@@ -11,3 +11,15 @@ The yaml is based on [the aws-alb-ingress-controller pod conditions docs.](https
 ```
 kubectl apply -f nginx.yaml
 ```
+
+### Useful Prometheus Queries
+
+View desired versus available versus unavailable replicas in a deployment:
+
+```
+kube_deployment_status_replicas_available{deployment="nginx-deployment"}
+kube_deployment_status_replicas_unavailable{deployment="nginx-deployment"}
+kube_deployment_status_replicas{deployment="nginx-deployment"}
+```
+
+You can put these into Grafana to see a nice diff.
