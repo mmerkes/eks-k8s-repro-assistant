@@ -30,7 +30,7 @@ This is a shortening of [the EKS docs to set up Prometheus.](https://docs.aws.am
 
 ```
 kubectl create namespace prometheus
-helm install prometheus stable/prometheus \
+helm install kube-prometheus stable/prometheus \
     --namespace prometheus \
     --set alertmanager.persistentVolume.storageClass="gp2",server.persistentVolume.storageClass="gp2"
 # Verify that pods are ready
