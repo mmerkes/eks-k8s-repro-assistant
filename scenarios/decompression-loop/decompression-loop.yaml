@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decompression-loop
+  labels:
+    app.kubernetes.io/name: decompression-loop
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: decompression-loop
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: decompression-loop
+    spec:
+      containers:
+        - name: decompression-loop
+          image: centos:7
+          resources:
+            limits:
+              cpu: 300m
+              ephemeral-storage: 1Gi
+              memory: 200Mi
+            requests:
+              cpu: 300m
+              ephemeral-storage: 1Gi
+              memory: 200Mi
+          command:
+            - bash
+          args:
+            - -c
+            - "yum install unzip -y; curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip\" -o \"awscliv2.zip\"; unzip awscliv2.zip; ./aws/install; cd; aws s3 cp s3://decompression-loop/sdk.tar.gz sdk.tar.gz && while true; do tar xvf sdk.tar.gz; sleep 5; done"
+            # Downloading and compressing the file in the pod itself seems to break the node a little slower and less consistently.
+            # Perhaps, the compressing the bundle on a Mac causes a little more work when you decompress in a Linux environment?
+            #- "yum install git -y; git clone https://github.com/aws/aws-sdk-go.git; tar cvf sdk.tar.gz aws-sdk-go; rm -rf aws-sdk-go && while true; do tar xvf sdk.tar.gz; sleep 5; done"
