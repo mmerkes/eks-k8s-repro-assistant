@@ -30,14 +30,15 @@ This is a shortening of [the EKS docs to set up Prometheus.](https://docs.aws.am
 
 ```
 kubectl create namespace prometheus
-helm install kube-prometheus stable/prometheus \
-    --namespace prometheus \
+helm install kube-prometheus stable/prometheus --namespace prometheus \
     --set alertmanager.persistentVolume.storageClass="gp2",server.persistentVolume.storageClass="gp2"
 # Verify that pods are ready
 kubectl get pods -n prometheus
 # Port forward console to local machine
-kubectl --namespace=prometheus port-forward deploy/prometheus-server 9090
+kubectl --namespace=prometheus port-forward deploy/kube-prometheus-server 9090
 ```
+
+Go to `localhost:9090` to verify the install.
 
 ### Set up Grafana to view Prometheus metrics
 
